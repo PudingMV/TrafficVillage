@@ -7,22 +7,25 @@ This document defines the shared interfaces and types in `TrafficVillage.Model`.
 
 | Module | Owner | Responsibility |
 |--------|-------|----------------|
-| `TrafficVillage.Model` | Szymon & Kądź | Types, interfaces, enums |
-| `TrafficVillage.Utils` | Szymon & Kądź | Pure helpers (parsers, guards) |
-| `TrafficVillage.Network` | Eryk | Graph, map loading, routing |
-| `TrafficVillage.Simulation` | Michał | Tick loop, vehicles, phases |
-| `TrafficVillage.Controllers` | Bartek | Traffic light algorithms |
-| `TrafficVillage.Metrics` | Marek | Stats, experiment runner |
-| `TrafficVillage.Cli` | Marek | AppOrchestrator, CLI entry point |
-| Integration tests | Szymon | End-to-end wiring tests |
+| `Model` | Szymon & Kądź | Types, interfaces, enums |
+| `Utils` | Szymon & Kądź | Pure helpers (parsers, guards) |
+| `Simulation` | Michał | SimulationManager, mediator/orchestrator |
+| `Simulation/Engine/RoadNetwork` | Eryk | Graph, map loading, routing |
+| `Simulation/Engine/Traffic` | Michał | Vehicle dynamics, queues, phases |
+| `Simulation/Controllers` | Bartek | Traffic light algorithms / controllers |
+| `Metrics` | Marek | Stats, experiment runner |
+| `Core` | Marek | AppOrchestrator composition root |
+| `Cli` | Marek | CLI entry point (`Program.cs`) |
+| `Tests` | Szymon / Team | Unit and integration tests |
 
 ## Dependency rules
 
 ```
-Cli → Simulation, Metrics, Network, Controllers, Model
-Simulation → Network, Controllers, Model
-Controllers → Model
-Network → Model, Utils
+Cli → Core
+Core → Simulation, Metrics, Model, Utils
+Simulation → Model, Controllers, Engine
+Simulation/Controllers → Model
+Simulation/Engine → Model, Utils
 Metrics → Model
 Utils → Model
 Model → (nothing)
@@ -87,7 +90,7 @@ public interface IRoadNetwork
 
 public interface IRoutePlanner
 {
-    IReadOnlyList<EdgeId> FindRoute(NodeId from, NodeId to);
+    IReadOnlyList<EdgeId> FindRoute(NodeId origin, NodeId destination);
 }
 ```
 

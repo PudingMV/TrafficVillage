@@ -1,5 +1,1 @@
-# Default reviewers — update with real GitHub usernames
-/docs/                          @PudingMV
-/src/TrafficVillage.Model/       @PudingMV
-/src/TrafficVillage.Utils/       @PudingMV
-/tests/TrafficVillage.Integration.Tests/ @PudingMV
+@PudingMV

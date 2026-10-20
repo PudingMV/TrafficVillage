@@ -28,16 +28,20 @@ Metrics (Marek) — observer only
 ```
 TrafficVillage.sln
 ├── src/
-│   ├── TrafficVillage.Model/         ← shared types + interfaces
-│   ├── TrafficVillage.Utils/         ← helpers
-│   ├── TrafficVillage.Network/       ← graph, routing, map loading
-│   ├── TrafficVillage.Simulation/      ← engine, vehicles, phases
-│   ├── TrafficVillage.Controllers/     ← algorithms
-│   ├── TrafficVillage.Metrics/         ← stats, experiments
-│   └── TrafficVillage.Cli/             ← entry point
+│   └── TrafficVillage/                    ← single binary executable
+│       ├── Cli/                           ← entry point (Program.cs)
+│       ├── Core/                          ← AppOrchestrator
+│       ├── Model/                         ← shared types + interfaces
+│       ├── Utils/                         ← helpers
+│       ├── Metrics/                       ← stats, experiments
+│       └── Simulation/
+│           ├── SimulationManager.cs       ← mediator / coordinator
+│           ├── Controllers/               ← algorithms (NoOpController, etc.)
+│           └── Engine/
+│               ├── RoadNetwork/           ← graph, routing, map loading
+│               └── Traffic/               ← vehicles, queues, phases
 └── tests/
-    ├── TrafficVillage.*.Tests/         ← unit tests per module
-    └── TrafficVillage.Integration.Tests/
+    └── TrafficVillage.Tests/              ← consolidated test suite
 ```
 
 ## Design principles

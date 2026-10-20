@@ -5,7 +5,7 @@ University team project — simulation software, not a real-world deployable sys
 
 ## Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 
 ## Quick start
 
@@ -17,23 +17,30 @@ dotnet build
 dotnet test
 
 # Run simulation
-dotnet run --project src/TrafficVillage.Cli
+dotnet run --project src/TrafficVillage
 ```
 
 ## Project structure
 
-| Module | Owner | Description |
-|--------|-------|-------------|
-| `TrafficVillage.Model` | Szymon & Kądź | Shared types and interfaces |
-| `TrafficVillage.Utils` | Szymon & Kądź | Helpers and parsers |
-| `TrafficVillage.Network` | Eryk | Graph, map loading, routing |
-| `TrafficVillage.Simulation` | Michał | Simulation engine and tick loop |
-| `TrafficVillage.Controllers` | Bartek | Traffic light algorithms |
-| `TrafficVillage.Metrics` | Marek | Metrics and experiments |
-| `TrafficVillage.Cli` | Marek | CLI entry point and orchestrator |
+The solution compiles into a single executable application (`TrafficVillage`) and a single test project (`TrafficVillage.Tests`):
+
+| Module / Directory | Owner | Description |
+|--------------------|-------|-------------|
+| `src/TrafficVillage/Cli` | Marek | Application entry point (`Program.cs`) |
+| `src/TrafficVillage/Core` | Marek | `AppOrchestrator` composition root |
+| `src/TrafficVillage/Model` | Szymon & Kądź | Shared types, domain records, and interfaces |
+| `src/TrafficVillage/Utils` | Szymon & Kądź | Helpers and guards |
+| `src/TrafficVillage/Metrics` | Marek | Metrics collectors and telemetry |
+| `src/TrafficVillage/Simulation` | Michał | `SimulationManager` orchestration |
+| `src/TrafficVillage/Simulation/Controllers` | Bartek | Traffic light controllers (e.g. `NoOpController`) |
+| `src/TrafficVillage/Simulation/Engine/RoadNetwork` | Eryk | Graph representation and map loading |
+| `src/TrafficVillage/Simulation/Engine/Traffic` | Michał | Vehicle dynamics and traffic simulation |
+| `tests/TrafficVillage.Tests` | Team | Consolidated unit and integration test suite |
 
 See [docs/api-contracts.md](docs/api-contracts.md) for interface definitions.
 See [docs/architecture.md](docs/architecture.md) for design overview.
+
+![Architecture Diagram](docs/images/architecture-overview.png)
 
 ## Git workflow
 
@@ -50,4 +57,4 @@ See [docs/architecture.md](docs/architecture.md) for design overview.
 
 ## CI
 
-GitHub Actions runs `dotnet build` and `dotnet test` on every push and PR to `main`.
+GitHub Actions runs `dotnet build` and `dotnet test` on every push and PR to `main` using .NET 10.
