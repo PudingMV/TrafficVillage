@@ -7,29 +7,54 @@ namespace TrafficVillage.Core;
 
 /// <summary>
 /// Composition root — wires modules and runs a simulation scenario end-to-end.
-/// Marek: extend with map/demand loading and result export.
+/// Marek: replace CreateDefault with map/demand loading from CLI arguments.
 /// </summary>
 public sealed class AppOrchestrator
 {
-    private readonly ISimulationManager _simulationManager;
+    private readonly ISimulationManager _simulation;
+    private readonly IRoadNetwork _network;
+    private readonly IRoutePlanner _routes;
+    private readonly DemandProfile _demand;
+    private readonly IReadOnlyDictionary<NodeId, ITrafficController> _controllers;
+    private readonly IMetricsCollector _metrics;
+    private readonly SimulationConfig _config;
 
-    public AppOrchestrator(ISimulationManager? simulationManager = null)
+    public AppOrchestrator(
+        ISimulationManager simulation,
+        IRoadNetwork network,
+        IRoutePlanner routes,
+        DemandProfile demand,
+        IReadOnlyDictionary<NodeId, ITrafficController> controllers,
+        IMetricsCollector metrics,
+        SimulationConfig config)
     {
-        _simulationManager = simulationManager ?? new SimulationManager();
+        ArgumentNullException.ThrowIfNull(simulation);
+        ArgumentNullException.ThrowIfNull(network);
+        ArgumentNullException.ThrowIfNull(routes);
+        ArgumentNullException.ThrowIfNull(demand);
+        ArgumentNullException.ThrowIfNull(controllers);
+        ArgumentNullException.ThrowIfNull(metrics);
+        ArgumentNullException.ThrowIfNull(config);
+
+        _simulation = simulation;
+        _network = network;
+        _routes = routes;
+        _demand = demand;
+        _controllers = controllers;
+        _metrics = metrics;
+        _config = config;
     }
 
-    public SimulationResult RunDefaultScenario()
-    {
-        var network = new RoadNetwork();
-        var controllers = new Dictionary<NodeId, ITrafficController>();
-        var metrics = new NullMetricsCollector();
+    public static AppOrchestrator CreateDefault() =>
+        new(
+            new SimulationManager(),
+            new RoadNetwork(),
+            new RoutePlanner(),
+            DemandProfile.Empty,
+            new Dictionary<NodeId, ITrafficController>(),
+            new NullMetricsCollector(),
+            new SimulationConfig(Seed: 42, TickDurationSeconds: 1.0, DurationSeconds: 100.0));
 
-        return _simulationManager.Run(
-            network,
-            controllers,
-            metrics,
-            seed: 42,
-            tickDurationSeconds: 1.0,
-            durationSeconds: 100.0);
-    }
+    public SimulationResult Run() =>
+        _simulation.Run(_network, _routes, _demand, _controllers, _metrics, _config);
 }

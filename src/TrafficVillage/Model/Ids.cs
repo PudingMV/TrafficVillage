@@ -14,3 +14,8 @@ public readonly record struct PhaseId(string Value)
 {
     public override string ToString() => Value;
 }
+
+public readonly record struct MovementId(string Value)
+{
+    public override string ToString() => Value;
+}

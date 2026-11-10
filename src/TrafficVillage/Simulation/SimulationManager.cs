@@ -3,34 +3,37 @@ using TrafficVillage.Model;
 namespace TrafficVillage.Simulation;
 
 /// <summary>
-/// Central tick-loop orchestrator. Michał: implement full simulation logic.
+/// Central tick-loop orchestrator. Michał: implement spawning, phases and vehicle movement.
 /// </summary>
 public sealed class SimulationManager : ISimulationManager
 {
     public SimulationResult Run(
         IRoadNetwork network,
+        IRoutePlanner routes,
+        DemandProfile demand,
         IReadOnlyDictionary<NodeId, ITrafficController> controllers,
         IMetricsCollector metrics,
-        int seed,
-        double tickDurationSeconds,
-        double durationSeconds)
+        SimulationConfig config)
     {
         ArgumentNullException.ThrowIfNull(network);
+        ArgumentNullException.ThrowIfNull(routes);
+        ArgumentNullException.ThrowIfNull(demand);
         ArgumentNullException.ThrowIfNull(controllers);
         ArgumentNullException.ThrowIfNull(metrics);
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(tickDurationSeconds);
-        ArgumentOutOfRangeException.ThrowIfNegative(durationSeconds);
+        ArgumentNullException.ThrowIfNull(config);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(config.TickDurationSeconds);
+        ArgumentOutOfRangeException.ThrowIfNegative(config.DurationSeconds);
 
         var currentTime = 0.0;
-        var tickCount = (int)(durationSeconds / tickDurationSeconds);
+        var tickCount = (int)(config.DurationSeconds / config.TickDurationSeconds);
 
         for (var tick = 0; tick < tickCount; tick++)
         {
-            currentTime += tickDurationSeconds;
+            currentTime += config.TickDurationSeconds;
 
             var state = new NetworkState(
                 currentTime,
-                Array.Empty<Vehicle>(),
+                [],
                 new Dictionary<NodeId, IntersectionState>());
 
             metrics.OnTick(state);
@@ -38,7 +41,7 @@ public sealed class SimulationManager : ISimulationManager
 
         return new SimulationResult(
             metrics.Finalize(),
-            durationSeconds,
-            seed);
+            config.DurationSeconds,
+            config.Seed);
     }
 }
