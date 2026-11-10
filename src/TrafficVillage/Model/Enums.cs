@@ -28,3 +28,11 @@ public enum ControllerActionKind
     RequestSwitch,
     ExtendGreen
 }
+
+public enum TurnKind
+{
+    Right,
+    Through,
+    Left,
+    UTurn
+}
