@@ -26,8 +26,8 @@ public class FakeFourWayTests
     {
         foreach (var movement in _network.Intersection.Movements)
         {
-            _network.TryGetEdge(movement.Incoming, out _).Should().BeTrue();
-            _network.TryGetEdge(movement.Outgoing, out _).Should().BeTrue();
+            _network.GetEdgeByRelatedNodeIds(movement.Incoming.SourceNodeId, movement.Incoming.DestinationNodeId).Should().NotBeNull();
+            _network.GetEdgeByRelatedNodeIds(movement.Outgoing.SourceNodeId, movement.Outgoing.DestinationNodeId).Should().NotBeNull();
         }
     }
 
@@ -36,7 +36,9 @@ public class FakeFourWayTests
     {
         var route = _network.FindRoute(new NodeId("N"), new NodeId("S"));
 
-        route.Should().Equal(new EdgeId("N-A"), new EdgeId("A-S"));
+        route.Should().Equal(
+            new EdgeId(new NodeId("N"), FakeFourWay.A),
+            new EdgeId(FakeFourWay.A, new NodeId("S")));
     }
 
     [Fact]

@@ -9,5 +9,4 @@ public sealed record Movement(
     EdgeId Incoming,
     EdgeId Outgoing,
     NodeId FromNode,
-    NodeId ToNode,
-    TurnKind Turn);
+    NodeId ToNode);

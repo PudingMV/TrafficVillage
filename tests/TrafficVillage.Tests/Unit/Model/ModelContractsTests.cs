@@ -6,12 +6,13 @@ namespace TrafficVillage.Tests.Model;
 public class ModelContractsTests
 {
     [Fact]
-    public void ControllerAction_defaults_to_keep_phase()
+    public void ControllerRequestResult_fulfilled_sets_current_state()
     {
-        var action = new ControllerAction(ControllerActionKind.KeepPhase);
+        var result = ControllerRequestResult.Fulfilled(PhaseState.Green);
 
-        action.Kind.Should().Be(ControllerActionKind.KeepPhase);
-        action.TargetPhase.Should().BeNull();
+        result.State.Should().Be(ControllerRequestResultState.Fulfilled);
+        result.CurrentState.Should().Be(PhaseState.Green);
+        result.Reason.Should().BeNull();
     }
 
     [Fact]
@@ -42,6 +43,7 @@ public class ModelContractsTests
     public void Ids_with_same_value_are_equal()
     {
         new MovementId("N-A-S").Should().Be(new MovementId("N-A-S"));
-        new EdgeId("N-A").Should().NotBe(new EdgeId("A-N"));
+        new EdgeId(new NodeId("N"), new NodeId("A"))
+            .Should().NotBe(new EdgeId(new NodeId("A"), new NodeId("N")));
     }
 }

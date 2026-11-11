@@ -12,8 +12,6 @@ namespace TrafficVillage.Core;
 public sealed class AppOrchestrator
 {
     private readonly ISimulationManager _simulation;
-    private readonly IRoadNetwork _network;
-    private readonly IRoutePlanner _routes;
     private readonly DemandProfile _demand;
     private readonly IReadOnlyDictionary<NodeId, ITrafficController> _controllers;
     private readonly IMetricsCollector _metrics;
@@ -21,16 +19,12 @@ public sealed class AppOrchestrator
 
     public AppOrchestrator(
         ISimulationManager simulation,
-        IRoadNetwork network,
-        IRoutePlanner routes,
         DemandProfile demand,
         IReadOnlyDictionary<NodeId, ITrafficController> controllers,
         IMetricsCollector metrics,
         SimulationConfig config)
     {
         _simulation = simulation;
-        _network = network;
-        _routes = routes;
         _demand = demand;
         _controllers = controllers;
         _metrics = metrics;
@@ -40,13 +34,11 @@ public sealed class AppOrchestrator
     public static AppOrchestrator CreateDefault() =>
         new(
             new SimulationManager(),
-            new RoadNetwork(),
-            new RoutePlanner(),
             DemandProfile.Empty,
             new Dictionary<NodeId, ITrafficController>(),
             new NullMetricsCollector(),
             new SimulationConfig(Seed: 42, TickDurationSeconds: 1.0, DurationSeconds: 100.0));
 
     public SimulationResult Run() =>
-        _simulation.Run(_network, _routes, _demand, _controllers, _metrics, _config);
+        _simulation.Run(_demand, _controllers, _metrics, _config);
 }

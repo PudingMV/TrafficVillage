@@ -6,5 +6,5 @@ namespace TrafficVillage.Model;
 /// </summary>
 public interface ITrafficController
 {
-    ControllerAction Decide(NetworkState state, NodeId intersectionId);
+    ControllerRequest Decide(NetworkState state, NodeId intersectionId);
 }

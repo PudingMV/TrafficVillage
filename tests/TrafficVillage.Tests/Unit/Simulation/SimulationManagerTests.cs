@@ -2,7 +2,6 @@ using FluentAssertions;
 using TrafficVillage.Metrics;
 using TrafficVillage.Model;
 using TrafficVillage.Simulation;
-using TrafficVillage.Tests.Fakes;
 
 namespace TrafficVillage.Tests.Simulation;
 
@@ -10,11 +9,7 @@ public class SimulationManagerTests
 {
     private static SimulationResult Run(SimulationConfig config)
     {
-        var network = new FakeFourWay();
-
         return new SimulationManager().Run(
-            network,
-            network,
             DemandProfile.Empty,
             new Dictionary<NodeId, ITrafficController>(),
             new NullMetricsCollector(),

@@ -11,7 +11,7 @@ public sealed class NullMetricsCollector : IMetricsCollector
     {
     }
 
-    public void OnVehicleExited(Vehicle vehicle)
+    public void OnVehicleExited(IVehicle vehicle)
     {
     }
 

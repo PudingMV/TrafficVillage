@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using TrafficVillage.Model;
+using TrafficVillage.Simulation.Engine.RoadNetwork;
 
 namespace TrafficVillage.Tests.Fakes;
 
@@ -20,30 +21,31 @@ public sealed class FakeFourWay : IRoadNetwork, IRoutePlanner
     private readonly Dictionary<NodeId, Node> _nodes;
     private readonly Dictionary<EdgeId, Edge> _edges;
 
-    public FakeFourWay(double armLengthMeters = 100, double speedMetersPerSecond = 13.9)
+    public FakeFourWay(int edgeLengthTicks = 10)
     {
-        List<Node> nodes =
-        [
-            new(A, new Vec2(0, 0), NodeKind.Intersection, HasTrafficLight: true),
-            new(new NodeId("N"), new Vec2(0, armLengthMeters), NodeKind.Home, HasTrafficLight: false),
-            new(new NodeId("E"), new Vec2(armLengthMeters, 0), NodeKind.Home, HasTrafficLight: false),
-            new(new NodeId("S"), new Vec2(0, -armLengthMeters), NodeKind.Work, HasTrafficLight: false),
-            new(new NodeId("W"), new Vec2(-armLengthMeters, 0), NodeKind.Work, HasTrafficLight: false),
-        ];
-
         var edges = new List<Edge>();
+        var aOutgoing = new List<Edge>();
+        var nodes = new List<Node>();
+
         foreach (var arm in Arms)
         {
-            edges.Add(new Edge(EdgeInto(arm), new NodeId(arm), A, armLengthMeters, speedMetersPerSecond));
-            edges.Add(new Edge(EdgeOutOf(arm), A, new NodeId(arm), armLengthMeters, speedMetersPerSecond));
+            var armId = new NodeId(arm);
+            var into = new Edge(armId, A, edgeLengthTicks);
+            var outOf = new Edge(A, armId, edgeLengthTicks);
+            edges.Add(into);
+            edges.Add(outOf);
+            aOutgoing.Add(outOf);
+            nodes.Add(new Node(armId, NodeKind.Entry, [into], hasTrafficLight: false));
         }
+
+        nodes.Insert(0, new Node(A, NodeKind.Intersection, aOutgoing, hasTrafficLight: true));
 
         Movement[] movements =
         [
-            Move("N", "S", TurnKind.Through), Move("N", "W", TurnKind.Right), Move("N", "E", TurnKind.Left),
-            Move("S", "N", TurnKind.Through), Move("S", "E", TurnKind.Right), Move("S", "W", TurnKind.Left),
-            Move("E", "W", TurnKind.Through), Move("E", "N", TurnKind.Right), Move("E", "S", TurnKind.Left),
-            Move("W", "E", TurnKind.Through), Move("W", "S", TurnKind.Right), Move("W", "N", TurnKind.Left),
+            Move("N", "S"), Move("N", "W"), Move("N", "E"),
+            Move("S", "N"), Move("S", "E"), Move("S", "W"),
+            Move("E", "W"), Move("E", "N"), Move("E", "S"),
+            Move("W", "E"), Move("W", "S"), Move("W", "N"),
         ];
 
         PhaseDefinition[] phases =
@@ -55,7 +57,7 @@ public sealed class FakeFourWay : IRoadNetwork, IRoutePlanner
         ];
 
         _nodes = nodes.ToDictionary(n => n.Id);
-        _edges = edges.ToDictionary(e => e.Id);
+        _edges = edges.ToDictionary(e => new EdgeId(e.From, e.To));
         Nodes = nodes;
         Edges = edges;
         Intersection = new IntersectionDefinition(A, movements, phases);
@@ -73,21 +75,12 @@ public sealed class FakeFourWay : IRoadNetwork, IRoutePlanner
 
     public IReadOnlyList<Edge> Edges { get; }
 
-    public IReadOnlyList<NodeId> ControlledIntersectionIds { get; } = [A];
-
     public IntersectionDefinition Intersection { get; }
 
-    public bool TryGetNode(NodeId id, [MaybeNullWhen(false)] out Node node) =>
-        _nodes.TryGetValue(id, out node);
+    public INode? GetNodeById(NodeId id) => _nodes.GetValueOrDefault(id);
 
-    public bool TryGetEdge(EdgeId id, [MaybeNullWhen(false)] out Edge edge) =>
-        _edges.TryGetValue(id, out edge);
-
-    public IReadOnlyList<Edge> IncomingEdges(NodeId nodeId) =>
-        Edges.Where(e => e.To == nodeId).ToList();
-
-    public IReadOnlyList<Edge> OutgoingEdges(NodeId nodeId) =>
-        Edges.Where(e => e.From == nodeId).ToList();
+    public Edge? GetEdgeByRelatedNodeIds(NodeId source, NodeId destination) =>
+        _edges.GetValueOrDefault(new EdgeId(source, destination));
 
     public bool TryGetIntersection(NodeId id, [MaybeNullWhen(false)] out IntersectionDefinition intersection)
     {
@@ -123,19 +116,18 @@ public sealed class FakeFourWay : IRoadNetwork, IRoutePlanner
             new Dictionary<NodeId, IntersectionState> { [A] = junction });
     }
 
-    private static EdgeId EdgeInto(string arm) => new($"{arm}-A");
+    private static EdgeId EdgeInto(string arm) => new(new NodeId(arm), A);
 
-    private static EdgeId EdgeOutOf(string arm) => new($"A-{arm}");
+    private static EdgeId EdgeOutOf(string arm) => new(A, new NodeId(arm));
 
-    private static Movement Move(string from, string to, TurnKind turn) =>
+    private static Movement Move(string from, string to) =>
         new(
             new MovementId($"{from}-A-{to}"),
             A,
             EdgeInto(from),
             EdgeOutOf(to),
             new NodeId(from),
-            new NodeId(to),
-            turn);
+            new NodeId(to));
 
     private static PhaseDefinition Phase(PhaseId id, params string[] movementIds) =>
         new(

@@ -2,7 +2,6 @@ using FluentAssertions;
 using TrafficVillage.Metrics;
 using TrafficVillage.Model;
 using TrafficVillage.Simulation;
-using TrafficVillage.Simulation.Engine.RoadNetwork;
 
 namespace TrafficVillage.Tests.Integration;
 
@@ -12,8 +11,6 @@ public class InvariantTests
     public void Tick_count_and_simulation_duration_match_requested_parameters()
     {
         var result = new SimulationManager().Run(
-            new RoadNetwork(),
-            new RoutePlanner(),
             DemandProfile.Empty,
             new Dictionary<NodeId, ITrafficController>(),
             new NullMetricsCollector(),

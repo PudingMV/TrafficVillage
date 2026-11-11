@@ -7,7 +7,7 @@ public interface IMetricsCollector
 {
     void OnTick(NetworkState state);
 
-    void OnVehicleExited(Vehicle vehicle);
+    void OnVehicleExited(IVehicle vehicle);
 
     SimulationMetrics Finalize();
 }

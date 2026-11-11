@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Xml;
 using TrafficVillage.Model;
 
 namespace TrafficVillage.Simulation.Engine.RoadNetwork;
@@ -8,31 +9,33 @@ namespace TrafficVillage.Simulation.Engine.RoadNetwork;
 /// </summary>
 public sealed class RoadNetwork : IRoadNetwork
 {
-    public IReadOnlyList<Node> Nodes { get; } = [];
+    public IReadOnlyDictionary<NodeId, Node> Nodes { get; }
 
-    public IReadOnlyList<Edge> Edges { get; } = [];
-
-    public IReadOnlyList<NodeId> ControlledIntersectionIds { get; } = [];
-
-    public bool TryGetNode(NodeId id, [MaybeNullWhen(false)] out Node node)
+    private RoadNetwork(IReadOnlyList<Node> nodes)
     {
-        node = null;
-        return false;
+        Nodes = nodes.ToDictionary(node => node.Id);
     }
 
-    public bool TryGetEdge(EdgeId id, [MaybeNullWhen(false)] out Edge edge)
+    public static RoadNetwork GenerateRandom(int numberOfNodes)
     {
-        edge = null;
-        return false;
+        // todo Eryk
+        throw new NotImplementedException();
     }
 
-    public IReadOnlyList<Edge> IncomingEdges(NodeId nodeId) => [];
-
-    public IReadOnlyList<Edge> OutgoingEdges(NodeId nodeId) => [];
-
-    public bool TryGetIntersection(NodeId id, [MaybeNullWhen(false)] out IntersectionDefinition intersection)
+    public static RoadNetwork FromMap()
     {
-        intersection = null;
-        return false;
+        // todo Eryk
+        throw new NotImplementedException();
     }
+
+    public INode? GetNodeById(NodeId id)
+    {
+        return Nodes.GetValueOrDefault(id);
+    }
+
+    public Edge? GetEdgeByRelatedNodeIds(NodeId source, NodeId destination)
+    {
+        return GetNodeById(source)?.OutgoingEdges.FirstOrDefault(edge => edge.To == destination);
+    }
+
 }

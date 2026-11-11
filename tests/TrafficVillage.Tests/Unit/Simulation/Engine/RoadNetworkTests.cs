@@ -6,12 +6,13 @@ namespace TrafficVillage.Tests.Simulation.Engine;
 public class RoadNetworkTests
 {
     [Fact]
-    public void Stub_network_has_no_nodes_or_edges()
+    public void Stub_factories_throw_not_implemented()
     {
-        var network = new RoadNetwork();
+        // shortcut: factory stubs throw NotImplementedException, replace with node/edge assertions once implemented
+        var generate = () => RoadNetwork.GenerateRandom(4);
+        var fromMap = () => RoadNetwork.FromMap();
 
-        network.Nodes.Should().BeEmpty();
-        network.Edges.Should().BeEmpty();
-        network.ControlledIntersectionIds.Should().BeEmpty();
+        generate.Should().Throw<NotImplementedException>();
+        fromMap.Should().Throw<NotImplementedException>();
     }
 }

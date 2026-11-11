@@ -8,8 +8,6 @@ namespace TrafficVillage.Simulation;
 public sealed class SimulationManager : ISimulationManager
 {
     public SimulationResult Run(
-        IRoadNetwork network,
-        IRoutePlanner routes,
         DemandProfile demand,
         IReadOnlyDictionary<NodeId, ITrafficController> controllers,
         IMetricsCollector metrics,
