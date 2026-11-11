@@ -28,14 +28,6 @@ public sealed class AppOrchestrator
         IMetricsCollector metrics,
         SimulationConfig config)
     {
-        ArgumentNullException.ThrowIfNull(simulation);
-        ArgumentNullException.ThrowIfNull(network);
-        ArgumentNullException.ThrowIfNull(routes);
-        ArgumentNullException.ThrowIfNull(demand);
-        ArgumentNullException.ThrowIfNull(controllers);
-        ArgumentNullException.ThrowIfNull(metrics);
-        ArgumentNullException.ThrowIfNull(config);
-
         _simulation = simulation;
         _network = network;
         _routes = routes;

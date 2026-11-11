@@ -15,12 +15,6 @@ public sealed class SimulationManager : ISimulationManager
         IMetricsCollector metrics,
         SimulationConfig config)
     {
-        ArgumentNullException.ThrowIfNull(network);
-        ArgumentNullException.ThrowIfNull(routes);
-        ArgumentNullException.ThrowIfNull(demand);
-        ArgumentNullException.ThrowIfNull(controllers);
-        ArgumentNullException.ThrowIfNull(metrics);
-        ArgumentNullException.ThrowIfNull(config);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(config.TickDurationSeconds);
         ArgumentOutOfRangeException.ThrowIfNegative(config.DurationSeconds);
 
