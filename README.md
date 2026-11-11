@@ -40,7 +40,6 @@ The solution compiles into a single executable application (`TrafficVillage`) an
 See [docs/api-contracts.md](docs/api-contracts.md) for interface definitions.
 See [docs/architecture.md](docs/architecture.md) for design overview.
 
-![Architecture Diagram](docs/images/architecture-overview.png)
 
 ## Git workflow
 
