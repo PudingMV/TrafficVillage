@@ -6,10 +6,12 @@ namespace TrafficVillage.Tests.Simulation.Engine;
 public class RoadNetworkTests
 {
     [Fact]
-    public void Stub_network_has_no_nodes()
+    public void Stub_network_has_no_nodes_or_edges()
     {
         var network = new RoadNetwork();
 
-        network.NodeIds.Should().BeEmpty();
+        network.Nodes.Should().BeEmpty();
+        network.Edges.Should().BeEmpty();
+        network.ControlledIntersectionIds.Should().BeEmpty();
     }
 }
