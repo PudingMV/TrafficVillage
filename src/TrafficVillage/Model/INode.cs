@@ -11,9 +11,5 @@ public interface INode
     /// Represents outgoing connections. Incoming connections must be inferred from source nodes.
     /// </summary>
     IReadOnlyList<Edge> OutgoingEdges { get; }
-    bool HasTrafficLight { get; }
-    IReadOnlyDictionary<Edge, PhaseState> CurrentPhases { get; }
-
-    ControllerRequestResult RequestPhaseChange(NodeId outgoingNodeId, PhaseState desiredPhaseState);
 }
 

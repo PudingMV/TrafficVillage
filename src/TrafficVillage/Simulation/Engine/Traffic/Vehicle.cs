@@ -16,6 +16,10 @@ public sealed class Vehicle : IVehicle
 
     public int RemainingEdgeTicks { get; }
 
+    public int RouteTime { get; private set;}
+
+    public int WaitTime { get; private set; }
+
     public Vehicle(VehicleId id, NodeId origin, NodeId destination, IReadOnlyList<Edge> route)
     {
         if (route.Count == 0)

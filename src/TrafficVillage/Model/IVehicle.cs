@@ -24,5 +24,15 @@ public interface IVehicle
     /// Number of ticks remaining on the current edge.
     /// </summary>
     int RemainingEdgeTicks { get; }
+
+    /// <summary>
+    /// Time (in ticks) spent on route 
+    /// </summary>
+    int RouteTime {get;}
+
+    /// <summary>
+    /// Time (in ticks) spent waiting on traffic lights
+    /// </summary>
+    int WaitTime {get;}
 }
 

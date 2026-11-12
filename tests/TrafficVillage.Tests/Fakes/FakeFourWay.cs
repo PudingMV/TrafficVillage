@@ -35,10 +35,10 @@ public sealed class FakeFourWay : IRoadNetwork, IRoutePlanner
             edges.Add(into);
             edges.Add(outOf);
             aOutgoing.Add(outOf);
-            nodes.Add(new Node(armId, NodeKind.Entry, [into], hasTrafficLight: false));
+            nodes.Add(new Node(armId, NodeKind.Entry, [into]));
         }
 
-        nodes.Insert(0, new Node(A, NodeKind.Intersection, aOutgoing, hasTrafficLight: true));
+        nodes.Insert(0, new Node(A, NodeKind.Intersection, aOutgoing));
 
         Movement[] movements =
         [
