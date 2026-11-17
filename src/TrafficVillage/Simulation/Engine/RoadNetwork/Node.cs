@@ -21,4 +21,3 @@ public sealed class Node : INode
         return OutgoingEdges.FirstOrDefault(edge => edge.To == nodeId);
     }
 }
-

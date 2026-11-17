@@ -59,4 +59,3 @@ public class SignalStateTests
         invalidOutgoingResult.State.Should().Be(ControllerRequestResultState.Invalid);
     }
 }
-

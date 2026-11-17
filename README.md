@@ -6,10 +6,14 @@ University team project — simulation software, not a real-world deployable sys
 ## Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [prek](https://prek.j178.dev) (for pre-commit hooks: `prek install`)
 
 ## Quick start
 
 ```bash
+# Install pre-commit hooks
+prek install
+
 # Build
 dotnet build
 
