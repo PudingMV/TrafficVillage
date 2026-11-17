@@ -23,6 +23,9 @@ SimulationManager (Michał)
 Metrics (Marek) — observer only
 ```
 
+![Architecture Diagram](docs/images/architecture-overview.png)
+
+
 ## Solution structure
 
 ```

@@ -1,8 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace TrafficVillage.Model;
 
 public interface IRoadNetwork
 {
-    IReadOnlyList<NodeId> NodeIds { get; }
-
-    bool TryGetNodeKind(NodeId nodeId, out NodeKind kind);
+    public INode? GetNodeById(NodeId id);
+    public Edge? GetEdgeByRelatedNodeIds(NodeId source, NodeId destination);
 }

@@ -69,11 +69,11 @@ public interface ISimulationManager
 {
     SimulationResult Run(
         IRoadNetwork network,
+        IRoutePlanner routes,
+        DemandProfile demand,
         IReadOnlyDictionary<NodeId, ITrafficController> controllers,
         IMetricsCollector metrics,
-        int seed,
-        double tickDurationSeconds,
-        double durationSeconds);
+        SimulationConfig config);
 }
 ```
 
@@ -84,23 +84,56 @@ Single integration anchor for the simulation engine.
 ```csharp
 public interface IRoadNetwork
 {
-    IReadOnlyList<NodeId> NodeIds { get; }
-    bool TryGetNodeKind(NodeId nodeId, out NodeKind kind);
+    IReadOnlyList<Node> Nodes { get; }
+    IReadOnlyList<Edge> Edges { get; }
+    IReadOnlyList<NodeId> ControlledIntersectionIds { get; }
+    bool TryGetNode(NodeId id, out Node? node);
+    bool TryGetEdge(EdgeId id, out Edge? edge);
+    IReadOnlyList<Edge> IncomingEdges(NodeId nodeId);
+    IReadOnlyList<Edge> OutgoingEdges(NodeId nodeId);
+    bool TryGetIntersection(NodeId id, out IntersectionDefinition? intersection);
 }
 
 public interface IRoutePlanner
 {
     IReadOnlyList<EdgeId> FindRoute(NodeId origin, NodeId destination);
 }
+
+public interface IMapLoader
+{
+    IRoadNetwork Load(string path);
+}
+
+public interface IDemandLoader
+{
+    DemandProfile Load(string path);
+}
 ```
+
+## Intersection model (v0)
+
+- Streets are directed `Edge`s. A two-way street is two edges.
+- A `Movement` is one path through a junction: incoming edge to outgoing edge.
+- Every movement has its own queue. Cars on the same road going different ways do not block each other.
+- A `PhaseDefinition` is a set of movements that may be green together.
+- `IntersectionDefinition.Phases` is the only list of legal phases. Controllers return a `PhaseId` from that list; they never build their own movement sets.
+- A car may enter the junction only if its movement is in the current phase, the phase is `Green`, and the car is first in that movement's queue.
+- `IntersectionState.QueueLengths` is keyed by `MovementId`.
+
+## Test fakes
+
+`tests/TrafficVillage.Tests/Fakes/FakeFourWay` implements `IRoadNetwork` and `IRoutePlanner` for one four-way junction with four hand-written phases. Use it in tests until real maps load.
 
 ## Immutable state records
 
 | Type | Purpose |
 |------|---------|
 | `NetworkState` | Full snapshot at a point in time |
-| `IntersectionState` | Phase, queues per approach |
-| `Vehicle` | Route, position, wait time, state |
+| `IntersectionState` | Live phase and queue length per movement |
+| `IntersectionDefinition` | Static movements and legal phases of one junction |
+| `Vehicle` | Origin, destination, route, position, wait time, stop count |
+| `DemandProfile` | Origin-destination spawn rates |
+| `SimulationConfig` | Seed, tick length, duration |
 | `ControllerAction` | What a controller wants to do |
 | `SimulationResult` | Final output of a run |
 | `SimulationMetrics` | Average wait, P95, throughput, etc. |

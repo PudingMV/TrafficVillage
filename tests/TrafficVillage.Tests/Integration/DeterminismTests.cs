@@ -8,10 +8,8 @@ public class DeterminismTests
     [Fact]
     public void Simulation_is_strictly_deterministic_given_same_seed()
     {
-        var orchestrator = new AppOrchestrator();
-
-        var runA = orchestrator.RunDefaultScenario();
-        var runB = orchestrator.RunDefaultScenario();
+        var runA = AppOrchestrator.CreateDefault().Run();
+        var runB = AppOrchestrator.CreateDefault().Run();
 
         runA.DurationSeconds.Should().Be(runB.DurationSeconds);
         runA.Seed.Should().Be(runB.Seed);

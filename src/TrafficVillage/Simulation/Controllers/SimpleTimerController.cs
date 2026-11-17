@@ -22,11 +22,14 @@ public sealed class SimpleTimerController : ITrafficController
         _nextLightChange = _trafficLightDuration;
     }
 
-    public ControllerAction Decide(NetworkState state, NodeId intersectionId)
+    public ControllerRequest Decide(NetworkState state, NodeId intersectionId)
     {
-        if (state.CurrentTimeSeconds < _nextLightChange) return new ControllerAction(ControllerActionKind.KeepPhase);
+        if (state.CurrentTimeSeconds < _nextLightChange)
+        {
+            throw new NotImplementedException();
+        }
 
         _nextLightChange += _trafficLightDuration;
-        return new ControllerAction(ControllerActionKind.RequestSwitch);
+        throw new NotImplementedException();
     }
 }

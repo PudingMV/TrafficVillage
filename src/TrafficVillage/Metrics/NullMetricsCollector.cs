@@ -11,7 +11,7 @@ public sealed class NullMetricsCollector : IMetricsCollector
     {
     }
 
-    public void OnVehicleExited(Vehicle vehicle)
+    public void OnVehicleExited(IVehicle vehicle)
     {
     }
 
@@ -19,6 +19,8 @@ public sealed class NullMetricsCollector : IMetricsCollector
         new(
             AverageWaitTimeSeconds: 0,
             P95WaitTimeSeconds: 0,
+            MaxQueueLength: 0,
             TotalVehiclesExited: 0,
-            ThroughputPerHour: 0);
+            ThroughputPerHour: 0,
+            AverageStopCount: 0);
 }

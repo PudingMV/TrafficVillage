@@ -8,8 +8,7 @@ public class BaselineScenarioTests
     [Fact]
     public void Default_baseline_scenario_runs_without_error()
     {
-        var orchestrator = new AppOrchestrator();
-        var result = orchestrator.RunDefaultScenario();
+        var result = AppOrchestrator.CreateDefault().Run();
 
         result.Should().NotBeNull();
         result.DurationSeconds.Should().Be(100.0);

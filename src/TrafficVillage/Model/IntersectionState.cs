@@ -5,4 +5,4 @@ public sealed record IntersectionState(
     PhaseId CurrentPhase,
     PhaseState PhaseState,
     double TimeInPhaseSeconds,
-    IReadOnlyDictionary<string, int> QueueLengthsByApproach);
+    IReadOnlyDictionary<MovementId, int> QueueLengths);

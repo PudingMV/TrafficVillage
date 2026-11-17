@@ -3,10 +3,8 @@ namespace TrafficVillage.Model;
 public interface ISimulationManager
 {
     SimulationResult Run(
-        IRoadNetwork network,
+        DemandProfile demand,
         IReadOnlyDictionary<NodeId, ITrafficController> controllers,
         IMetricsCollector metrics,
-        int seed,
-        double tickDurationSeconds,
-        double durationSeconds);
+        SimulationConfig config);
 }

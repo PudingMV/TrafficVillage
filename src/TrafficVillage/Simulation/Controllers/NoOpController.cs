@@ -7,6 +7,8 @@ namespace TrafficVillage.Simulation.Controllers;
 /// </summary>
 public sealed class NoOpController : ITrafficController
 {
-    public ControllerAction Decide(NetworkState state, NodeId intersectionId) =>
-        new(ControllerActionKind.KeepPhase);
+    public ControllerRequest Decide(NetworkState state, NodeId intersectionId)
+    {
+        throw new NotImplementedException();
+    }
 }
