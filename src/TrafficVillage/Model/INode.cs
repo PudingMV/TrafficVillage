@@ -12,4 +12,3 @@ public interface INode
     /// </summary>
     IReadOnlyList<Edge> OutgoingEdges { get; }
 }
-

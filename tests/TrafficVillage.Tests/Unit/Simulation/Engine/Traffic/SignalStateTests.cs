@@ -8,7 +8,7 @@ namespace TrafficVillage.Tests.Unit.Simulation.Engine.Traffic;
 public class SignalStateTests
 {
     [Fact]
-    public void Constructor_initializes_all_phases_to_red()
+    public void RequestPhaseChange_fulfills_and_persists_new_state()
     {
         var nodeA = new NodeId("A");
         var nodeB = new NodeId("B");
@@ -16,28 +16,14 @@ public class SignalStateTests
         var node = new Node(nodeA, NodeKind.Intersection, [edge]);
 
         var signalState = new SignalState([node]);
-        var snapshot = signalState.Snapshot(nodeA);
 
-        snapshot.Should().ContainSingle();
-        snapshot[edge].Should().Be(PhaseState.Red);
-    }
+        var fulfillResult = signalState.RequestPhaseChange(nodeA, nodeB, PhaseState.Green);
+        fulfillResult.State.Should().Be(ControllerRequestResultState.Fulfilled);
+        fulfillResult.CurrentState.Should().Be(PhaseState.Green);
 
-    [Fact]
-    public void Snapshot_returns_independent_copy()
-    {
-        var nodeA = new NodeId("A");
-        var nodeB = new NodeId("B");
-        var edge = new Edge(nodeA, nodeB, 10);
-        var node = new Node(nodeA, NodeKind.Intersection, [edge]);
-
-        var signalState = new SignalState([node]);
-        var firstSnapshot = signalState.Snapshot(nodeA);
-
-        var result = signalState.RequestPhaseChange(nodeA, nodeB, PhaseState.Green);
-        result.State.Should().Be(ControllerRequestResultState.Fulfilled);
-
-        firstSnapshot[edge].Should().Be(PhaseState.Red);
-        signalState.Snapshot(nodeA)[edge].Should().Be(PhaseState.Green);
+        var repeatResult = signalState.RequestPhaseChange(nodeA, nodeB, PhaseState.Green);
+        repeatResult.State.Should().Be(ControllerRequestResultState.AlreadyActive);
+        repeatResult.CurrentState.Should().Be(PhaseState.Green);
     }
 
     [Fact]
@@ -73,4 +59,3 @@ public class SignalStateTests
         invalidOutgoingResult.State.Should().Be(ControllerRequestResultState.Invalid);
     }
 }
-

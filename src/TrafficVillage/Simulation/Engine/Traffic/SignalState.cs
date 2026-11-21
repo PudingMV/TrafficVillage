@@ -45,4 +45,3 @@ public sealed class SignalState
         return ControllerRequestResult.Fulfilled(desired);
     }
 }
-

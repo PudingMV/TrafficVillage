@@ -3,7 +3,7 @@ using TrafficVillage.Model;
 namespace TrafficVillage.Simulation.Engine.Traffic;
 
 
-/// <inheritdoc/> 
+/// <inheritdoc/>
 public sealed class Vehicle : IVehicle
 {
     public VehicleId Id { get; }
@@ -16,7 +16,7 @@ public sealed class Vehicle : IVehicle
 
     public int RemainingEdgeTicks { get; }
 
-    public int RouteTime { get; private set;}
+    public int RouteTime { get; private set; }
 
     public int WaitTime { get; private set; }
 
@@ -36,4 +36,3 @@ public sealed class Vehicle : IVehicle
     }
 
 }
-

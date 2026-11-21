@@ -26,13 +26,12 @@ public interface IVehicle
     int RemainingEdgeTicks { get; }
 
     /// <summary>
-    /// Time (in ticks) spent on route 
+    /// Time (in ticks) spent on route
     /// </summary>
-    int RouteTime {get;}
+    int RouteTime { get; }
 
     /// <summary>
     /// Time (in ticks) spent waiting on traffic lights
     /// </summary>
-    int WaitTime {get;}
+    int WaitTime { get; }
 }
-
