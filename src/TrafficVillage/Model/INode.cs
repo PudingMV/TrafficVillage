@@ -11,4 +11,9 @@ public interface INode
     /// Represents outgoing connections. Incoming connections must be inferred from source nodes.
     /// </summary>
     IReadOnlyList<Edge> OutgoingEdges { get; }
+    /// <summary>
+    /// Neighbouring nodes in clockwise order around this node (any starting arm).
+    /// Empty when unknown; intersections with 3+ arms then fall back to one phase per approach.
+    /// </summary>
+    IReadOnlyList<NodeId> ArmOrder { get; }
 }

@@ -84,13 +84,9 @@ Single integration anchor for the simulation engine.
 ```csharp
 public interface IRoadNetwork
 {
-    IReadOnlyList<Node> Nodes { get; }
-    IReadOnlyList<Edge> Edges { get; }
-    IReadOnlyList<NodeId> ControlledIntersectionIds { get; }
-    bool TryGetNode(NodeId id, out Node? node);
-    bool TryGetEdge(EdgeId id, out Edge? edge);
-    IReadOnlyList<Edge> IncomingEdges(NodeId nodeId);
-    IReadOnlyList<Edge> OutgoingEdges(NodeId nodeId);
+    INode? GetNodeById(NodeId id);
+    Edge? GetEdgeByRelatedNodeIds(NodeId source, NodeId destination);
+    IReadOnlyCollection<IntersectionDefinition> Intersections { get; }
     bool TryGetIntersection(NodeId id, out IntersectionDefinition? intersection);
 }
 
@@ -119,6 +115,17 @@ public interface IDemandLoader
 - `IntersectionDefinition.Phases` is the only list of legal phases. Controllers return a `PhaseId` from that list; they never build their own movement sets.
 - A car may enter the junction only if its movement is in the current phase, the phase is `Green`, and the car is first in that movement's queue.
 - `IntersectionState.QueueLengths` is keyed by `MovementId`.
+
+### Phase generation (v1)
+
+- Every `NodeKind.Intersection` node gets an `IntersectionDefinition`, built once in `RoadNetwork` by `IntersectionBuilder`.
+- Movement = incoming edge + outgoing edge, U-turns excluded. Id format: `From-Node-To`.
+- Arm order: each intersection node lists its neighbours clockwise in `ArmOrder` (graph rotation, no coordinates).
+- Conflict = same exit (merge) or crossing paths, decided from `ArmOrder` (right-hand traffic).
+  Movements from the same approach never conflict.
+- Without `ArmOrder`, intersections with 3+ arms use one phase per approach (safe fallback).
+- `Phases` = every maximal conflict-free set. `DefaultCycle` = greedy cover, every movement green at least once.
+- Phase ids are `Node:P1`, `Node:P2`, ... and are stable for the same map.
 
 ## Test fakes
 
