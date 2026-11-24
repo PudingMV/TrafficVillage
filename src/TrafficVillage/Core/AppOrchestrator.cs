@@ -52,7 +52,8 @@ public sealed class AppOrchestrator
             new NullMetricsCollector(),
             new SimulationConfig(Seed: 42, TickDurationSeconds: 1.0, DurationSeconds: 100.0));
 
-    public static AppOrchestrator CreateFromOptions(CliOptions options) {
+    public static AppOrchestrator CreateFromOptions(CliOptions options)
+    {
         var config = new SimulationConfig(
             Seed: options.Seed,
             TickDurationSeconds: options.TickDurationSeconds,
@@ -75,7 +76,8 @@ public sealed class AppOrchestrator
     }
 
     private static NoOpController CreateController(string name) =>
-        name.ToLowerInvariant() switch {
+        name.ToLowerInvariant() switch
+        {
             "noop" => new NoOpController(),
             _ => throw new ArgumentException($"Unknown controller: {name}", nameof(name))
         };

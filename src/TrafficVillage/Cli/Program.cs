@@ -38,7 +38,7 @@ catch (ArgumentException ex)
 {
     Console.Error.WriteLine($"Invalid argument: {ex.Message}");
     Console.Error.WriteLine("Run with --help to see available options.");
-    return 1;    
+    return 1;   
 }
 catch (Exception ex)
 {
@@ -63,7 +63,9 @@ static CliOptions ParseArguments(string[] args)
         string RequireValue()
         {
             if (i+1 >= args.Length)
+            {
                 throw new ArgumentException($"Missing value for option '{flag}'.");
+            }
             return args[++i];
         }
 
@@ -88,21 +90,27 @@ static CliOptions ParseArguments(string[] args)
             case "-s":
                 string seedRaw = RequireValue();
                 if (!int.TryParse(seedRaw, NumberStyles.Integer, CultureInfo.InvariantCulture, out seed))
+                {
                     throw new ArgumentException($"Invalid integer for {flag}: '{seedRaw}'.");
+                }
                 break;
 
             case "--duration":
             case "-t":
                 string durationRaw = RequireValue();
                 if (!double.TryParse(durationRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out durationSeconds) || durationSeconds <= 0)
+                {
                     throw new ArgumentException($"Duration for {flag} must be a positive number: '{durationRaw}'.");
+                }
                 break;
 
             case "--tick":
-            string tickRaw = RequireValue();
-            if (!double.TryParse(tickRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out tickDurationSeconds) || tickDurationSeconds <= 0)
-                throw new ArgumentException($"Tick duration for {flag} must be a positive number: '{tickRaw}'.");
-            break;
+                string tickRaw = RequireValue();
+                if (!double.TryParse(tickRaw, NumberStyles.Float, CultureInfo.InvariantCulture, out tickDurationSeconds) || tickDurationSeconds <= 0)
+                {
+                    throw new ArgumentException($"Tick duration for {flag} must be a positive number: '{tickRaw}'.");
+                }
+                break;
 
             case "--out":
             case "-o":
@@ -155,7 +163,7 @@ static void AppendResultToCsv(string path, CliOptions options, SimulationResult 
         Directory.CreateDirectory(directory);
 
     bool fileExists = File.Exists(path);
-    using var writer = new StreamWriter(path, append : true);
+    using var writer = new StreamWriter(path, append: true);
 
     if (!fileExists)
     {
