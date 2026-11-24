@@ -38,7 +38,7 @@ catch (ArgumentException ex)
 {
     Console.Error.WriteLine($"Invalid argument: {ex.Message}");
     Console.Error.WriteLine("Run with --help to see available options.");
-    return 1;   
+    return 1;
 }
 catch (Exception ex)
 {
@@ -62,7 +62,7 @@ static CliOptions ParseArguments(string[] args)
 
         string RequireValue()
         {
-            if (i+1 >= args.Length)
+            if (i + 1 >= args.Length)
             {
                 throw new ArgumentException($"Missing value for option '{flag}'.");
             }
