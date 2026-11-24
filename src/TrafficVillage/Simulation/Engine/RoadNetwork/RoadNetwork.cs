@@ -1,20 +1,27 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Xml;
 using TrafficVillage.Model;
+using TrafficVillage.Simulation.Engine.RoadNetwork.Intersections;
 
 namespace TrafficVillage.Simulation.Engine.RoadNetwork;
 
 /// <summary>
-/// Stub road network. Eryk: build from a loaded map and generate intersection phases.
+/// Road network. Eryk: build from a loaded map. Intersection phases are generated on construction.
 /// </summary>
 public sealed class RoadNetwork : IRoadNetwork
 {
+    private readonly Dictionary<NodeId, IntersectionDefinition> _intersections;
+
     public IReadOnlyDictionary<NodeId, Node> Nodes { get; }
+
+    public IReadOnlyCollection<IntersectionDefinition> Intersections => _intersections.Values;
 
     private RoadNetwork(IReadOnlyList<Node> nodes)
     {
         Nodes = nodes.ToDictionary(node => node.Id);
+        _intersections = IntersectionBuilder.BuildAll(nodes);
     }
+
+    public static RoadNetwork FromNodes(IReadOnlyList<Node> nodes) => new(nodes);
 
     public static RoadNetwork GenerateRandom(int numberOfNodes)
     {
@@ -24,7 +31,7 @@ public sealed class RoadNetwork : IRoadNetwork
 
     public static RoadNetwork FromMap()
     {
-        // todo Eryk
+        // todo Eryk: parse the map, then return FromNodes(nodes)
         throw new NotImplementedException();
     }
 
@@ -38,4 +45,6 @@ public sealed class RoadNetwork : IRoadNetwork
         return GetNodeById(source)?.OutgoingEdges.FirstOrDefault(edge => edge.To == destination);
     }
 
+    public bool TryGetIntersection(NodeId id, [MaybeNullWhen(false)] out IntersectionDefinition intersection) =>
+        _intersections.TryGetValue(id, out intersection);
 }

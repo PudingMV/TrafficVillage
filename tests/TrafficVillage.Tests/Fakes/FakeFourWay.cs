@@ -38,7 +38,8 @@ public sealed class FakeFourWay : IRoadNetwork, IRoutePlanner
             nodes.Add(new Node(armId, NodeKind.Entry, [into]));
         }
 
-        nodes.Insert(0, new Node(A, NodeKind.Intersection, aOutgoing));
+        nodes.Insert(0, new Node(
+            A, NodeKind.Intersection, aOutgoing, Arms.Select(arm => new NodeId(arm)).ToList()));
 
         Movement[] movements =
         [
@@ -60,7 +61,8 @@ public sealed class FakeFourWay : IRoadNetwork, IRoutePlanner
         _edges = edges.ToDictionary(e => new EdgeId(e.From, e.To));
         Nodes = nodes;
         Edges = edges;
-        Intersection = new IntersectionDefinition(A, movements, phases);
+        Intersection = new IntersectionDefinition(
+            A, movements, phases, [NorthSouth, EastWest, NorthSouthLeft, EastWestLeft]);
     }
 
     public static DemandProfile MorningRush { get; } = new(
@@ -76,6 +78,8 @@ public sealed class FakeFourWay : IRoadNetwork, IRoutePlanner
     public IReadOnlyList<Edge> Edges { get; }
 
     public IntersectionDefinition Intersection { get; }
+
+    public IReadOnlyCollection<IntersectionDefinition> Intersections => [Intersection];
 
     public INode? GetNodeById(NodeId id) => _nodes.GetValueOrDefault(id);
 
