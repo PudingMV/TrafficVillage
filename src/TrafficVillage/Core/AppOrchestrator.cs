@@ -2,6 +2,7 @@ using TrafficVillage.Metrics;
 using TrafficVillage.Model;
 using TrafficVillage.Simulation;
 using TrafficVillage.Simulation.Engine.RoadNetwork;
+using TrafficVillage.Simulation.Controllers;
 
 namespace TrafficVillage.Core;
 
@@ -73,7 +74,7 @@ public sealed class AppOrchestrator
         );
     }
 
-    private static ITrafficController CreateController(string name) =>
+    private static NoOpController CreateController(string name) =>
         name.ToLowerInvariant() switch {
             "noop" => new NoOpController(),
             _ => throw new ArgumentException($"Unknown controller: {name}", nameof(name))

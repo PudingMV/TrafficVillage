@@ -2,12 +2,14 @@ using System.Globalization;
 using TrafficVillage.Core;
 using TrafficVillage.Model;
 
-if (args.Contains("--help") || args.Contains("-h")) {
+if (args.Contains("--help") || args.Contains("-h"))
+{
     PrintHelp();
     return 0;
 }
 
-try {
+try
+{
     CliOptions options = ParseArguments(args);
 
     Console.WriteLine("TrafficVillage - starting simulation...");
@@ -24,40 +26,49 @@ try {
 
     PrintSummary(result, options.ControllerName);
 
-    if (!string.IsNullOrWhiteSpace(options.OutputCsvPath)) {
+    if (!string.IsNullOrWhiteSpace(options.OutputCsvPath))
+    {
         AppendResultToCsv(options.OutputCsvPath, options, result);
         Console.WriteLine($"Results saved to: {options.OutputCsvPath}");
     }
 
     return 0;
-} catch (ArgumentException ex) {
+}
+catch (ArgumentException ex)
+{
     Console.Error.WriteLine($"Invalid argument: {ex.Message}");
     Console.Error.WriteLine("Run with --help to see available options.");
     return 1;    
-} catch (Exception ex) {
+}
+catch (Exception ex)
+{
     Console.Error.WriteLine($"Simulation error: {ex.Message}");
     return 1;
 }
 
-static CliOptions ParseArguments(string[] args) {
+static CliOptions ParseArguments(string[] args)
+{
     string? mapPath = null;
-    string? DemandPath = null;
+    string? demandPath = null;
     string controllerName = "noop";
     int seed = 42;
     double tickDurationSeconds = 1.0;
     double durationSeconds = 100.0;
-    string? OutputCsvPath = null;
+    string? outputCsvPath = null;
 
-    for (int i = 0; i < args.Length; i++) {
+    for (int i = 0; i < args.Length; i++)
+    {
         string flag = args[i];
 
-        string RequireValue() {
+        string RequireValue()
+        {
             if (i+1 >= args.Length)
                 throw new ArgumentException($"Missing value for option '{flag}'.");
             return args[++i];
         }
 
-        switch (flag) {
+        switch (flag)
+        {
             case "--map":
             case "-m":
                 mapPath = RequireValue();
@@ -65,7 +76,7 @@ static CliOptions ParseArguments(string[] args) {
 
             case "--demand":
             case "-d":
-                DemandPath = RequireValue();
+                demandPath = RequireValue();
                 break;
 
             case "--controller":
@@ -114,7 +125,8 @@ static CliOptions ParseArguments(string[] args) {
     );
 }
 
-static void PrintSummary(SimulationResult result, string controllerName) {
+static void PrintSummary(SimulationResult result, string controllerName)
+{
     SimulationMetrics m = result.Metrics;
     var inv = CultureInfo.InvariantCulture;
 
@@ -133,7 +145,8 @@ static void PrintSummary(SimulationResult result, string controllerName) {
     Console.WriteLine("--------------------------------------------------");
 }
 
-static void AppendResultToCsv(string path, CliOptions options, SimulationResult result) {
+static void AppendResultToCsv(string path, CliOptions options, SimulationResult result)
+{
     var inv = CultureInfo.InvariantCulture;
     SimulationMetrics m = result.Metrics;
 
@@ -142,9 +155,10 @@ static void AppendResultToCsv(string path, CliOptions options, SimulationResult 
         Directory.CreateDirectory(directory);
 
     bool fileExists = File.Exists(path);
-    using var writer = new StreamWriter(path, append = true);
+    using var writer = new StreamWriter(path, append : true);
 
-    if (!fileExists) {
+    if (!fileExists)
+    {
         writer.WriteLine(
             "Controller,Seed,DurationSeconds,TickDurationSeconds," +
             "TotalVehiclesExited,ThroughputPerHour,AverageWaitTimeSeconds," +
@@ -166,7 +180,8 @@ static void AppendResultToCsv(string path, CliOptions options, SimulationResult 
     );
 }
 
-static void PrintHelp() {
+static void PrintHelp()
+{
     Console.WriteLine("""
         TrafficVillage — Traffic Simulation CLI
 
