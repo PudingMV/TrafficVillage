@@ -7,7 +7,18 @@ namespace TrafficVillage.Simulation;
 /// </summary>
 public sealed class SimulationManager : ISimulationManager
 {
+    // Possible implementation:
+    // 1. Before the loop, initialize a config.Seed, a SignalState instance for network.Intersections,
+    //    and separate FIFO queues for each MovementId.
+    // 2. On each tick, spawn new vehicles based on demand and routes, then build the current
+    //    NetworkState snapshot.
+    // 3. Query controllers (controller.Decide) for each intersection, forward phase change requests
+    //    to SignalState, and advance signal timers.
+    // 4. Update vehicle positions on edges and in queues (calling metrics.OnVehicleExited upon
+    //    reaching the destination) before passing the snapshot to metrics.OnTick.
     public SimulationResult Run(
+        IRoadNetwork network,
+        IRoutePlanner routes,
         DemandProfile demand,
         IReadOnlyDictionary<NodeId, ITrafficController> controllers,
         IMetricsCollector metrics,
