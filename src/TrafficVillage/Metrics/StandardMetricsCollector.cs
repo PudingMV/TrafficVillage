@@ -5,7 +5,6 @@ namespace TrafficVillage.Metrics;
 public sealed class StandardMetricsCollector : IMetricsCollector
 {
     private readonly double _tickDurationSeconds;
-    private readonly List<double> _waitTimeSeconds = [];
     private readonly List<int> _exitedStopCounts = [];
     private readonly List<double> _exitedWaitTimesSeconds = [];
 

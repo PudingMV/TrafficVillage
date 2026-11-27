@@ -52,8 +52,34 @@ public sealed class AppOrchestrator
             new NullMetricsCollector(),
             new SimulationConfig(Seed: 42, TickDurationSeconds: 1.0, DurationSeconds: 100.0));
 
+    public static readonly IReadOnlySet<string> SupportedControllers =
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "noop",
+            "simpletimer"
+        };
+
     public static AppOrchestrator CreateFromOptions(CliOptions options)
     {
+
+        if (options.MapPath is not null)
+        {
+            throw new NotImplementedException("Loading custom maps (--map) is not implemented yet.");
+        }
+
+        if (options.DemandPath is not null)
+        {
+            throw new NotImplementedException("Loading custom demand profiles (--demand) is not implemented yet");
+        }
+
+        if (!SupportedControllers.Contains(options.ControllerName))
+        {
+            throw new ArgumentException(
+                $"Unknown controller '{options.ControllerName}'. Supported controllers: {string.Join(", ", SupportedControllers)}.",
+                nameof(options));
+        }
+
+
         var config = new SimulationConfig(
             Seed: options.Seed,
             TickDurationSeconds: options.TickDurationSeconds,

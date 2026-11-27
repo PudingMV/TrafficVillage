@@ -84,6 +84,11 @@ static CliOptions ParseArguments(string[] args)
             case "--controller":
             case "-c":
                 controllerName = RequireValue();
+                if (!AppOrchestrator.SupportedControllers.Contains(controllerName))
+                {
+                    throw new ArgumentException(
+                        $"Unknown controller '{controllerName}'. Supported controllers: {string.Join(", ", AppOrchestrator.SupportedControllers)}.");
+                }
                 break;
 
             case "--seed":
