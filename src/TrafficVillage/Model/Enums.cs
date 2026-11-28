@@ -43,9 +43,14 @@ public enum PhaseState
     Green,
 
     /// <summary>
+    /// Warning before traffic stops
+    /// </summary>
+    Yellow,
+
+    /// <summary>
     /// Traffic stopped
     /// </summary>
-    Red
+    AllRed
 }
 
 /// <summary>

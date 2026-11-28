@@ -1,6 +1,7 @@
 using TrafficVillage.Metrics;
 using TrafficVillage.Model;
 using TrafficVillage.Simulation;
+using TrafficVillage.Simulation.Controllers;
 using TrafficVillage.Simulation.Engine.RoadNetwork;
 using TrafficVillage.Simulation.Controllers;
 
@@ -25,6 +26,8 @@ public sealed record CliOptions(
 public sealed class AppOrchestrator
 {
     private readonly ISimulationManager _simulation;
+    private readonly IRoadNetwork _network;
+    private readonly IRoutePlanner _routes;
     private readonly DemandProfile _demand;
     private readonly IReadOnlyDictionary<NodeId, ITrafficController> _controllers;
     private readonly IMetricsCollector _metrics;
@@ -32,25 +35,40 @@ public sealed class AppOrchestrator
 
     public AppOrchestrator(
         ISimulationManager simulation,
+        IRoadNetwork network,
+        IRoutePlanner routes,
         DemandProfile demand,
         IReadOnlyDictionary<NodeId, ITrafficController> controllers,
         IMetricsCollector metrics,
         SimulationConfig config)
     {
         _simulation = simulation;
+        _network = network;
+        _routes = routes;
         _demand = demand;
         _controllers = controllers;
         _metrics = metrics;
         _config = config;
     }
 
-    public static AppOrchestrator CreateDefault() =>
-        new(
+    public static AppOrchestrator CreateDefault()
+    {
+        var network = RoadNetwork.FromNodes([]);
+        var routes = new RoutePlanner();
+        /* for testing
+        var controllers = network.Intersections.ToDictionary(
+            intersection => intersection.Id,
+            ITrafficController (intersection) => new SimpleTimerController(intersection));*/
+
+        return new AppOrchestrator(
             new SimulationManager(),
+            network,
+            routes,
             DemandProfile.Empty,
-            new Dictionary<NodeId, ITrafficController>(),
+            new Dictionary<NodeId, ITrafficController>(), // controllers
             new NullMetricsCollector(),
             new SimulationConfig(Seed: 42, TickDurationSeconds: 1.0, DurationSeconds: 100.0));
+    }
 
     public static readonly IReadOnlySet<string> SupportedControllers =
         new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -109,5 +127,5 @@ public sealed class AppOrchestrator
         };
 
     public SimulationResult Run() =>
-        _simulation.Run(_demand, _controllers, _metrics, _config);
+        _simulation.Run(_network, _routes, _demand, _controllers, _metrics, _config);
 }
